@@ -1,6 +1,7 @@
 package Controladores;
 
 import java.sql.Connection;
+import java.util.List;
 
 import DAO.ReservaDAO;
 import Factory.ConexionBase;
@@ -17,5 +18,13 @@ public class ReservaController {
 	
 	public void guardar(Reserva reserva) {
 		this.reservaDAO.guardar(reserva);
+	}
+	
+	public List<Reserva> mostrar(){
+		return this.reservaDAO.mostrar();
+	}
+	
+	public List<Reserva> buscar(String id){
+		return this.reservaDAO.buscarId(id);
 	}
 }

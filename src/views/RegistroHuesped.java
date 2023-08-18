@@ -47,6 +47,7 @@ public class RegistroHuesped extends JFrame {
 	
 	private HuespedesController huespedesController;
 	private ReservaController reservaController;
+	public int getNReserva;
 
 	/**
 	 * Launch the application.
@@ -68,6 +69,7 @@ public class RegistroHuesped extends JFrame {
 	 * Create the frame.
 	 */
 	public RegistroHuesped(int setReservaId) {
+		getNReserva = setReservaId;
 		RegistroHuesped registroHuesped = this;
 		this.huespedesController = new HuespedesController();
 		this.reservaController = new ReservaController();
@@ -216,7 +218,7 @@ public class RegistroHuesped extends JFrame {
 		lblNumeroReserva.setFont(new Font("Roboto Black", Font.PLAIN, 18));
 		contentPane.add(lblNumeroReserva);
 		
-		txtNreserva = new JTextField("" + setReservaId);
+		txtNreserva = new JTextField(Integer.toString(setReservaId));
 		txtNreserva.setEditable(false);
 		txtNreserva.setFont(new Font("Roboto", Font.PLAIN, 16));
 		txtNreserva.setBounds(560, 495, 285, 33);
@@ -352,7 +354,7 @@ public class RegistroHuesped extends JFrame {
     	LocalDate fechaN = LocalDate.parse(((JTextField) txtFechaN.getDateEditor().getUiComponent()).getText());
     	
     	Huespedes huespedes = new Huespedes(txtNombre.getText(), txtApellido.getText(), fechaN, 
-    			txtNacionalidad.getSelectedItem().toString(), txtTelefono.getText(), 3);
+    			txtNacionalidad.getSelectedItem().toString(), txtTelefono.getText(), getNReserva);
     	
     	this.huespedesController.guardar(huespedes);
     	
