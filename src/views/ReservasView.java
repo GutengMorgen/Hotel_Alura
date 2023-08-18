@@ -347,11 +347,11 @@ public class ReservasView extends JFrame {
     		
     		reservaController.guardar(reserva);
     		
-    		RegistroHuesped registro = new RegistroHuesped();
+    		RegistroHuesped registro = new RegistroHuesped(reserva.getId());
 			registro.setVisible(true);
 			dispose();
     	} else {
-			JOptionPane.showMessageDialog(this, "los campos no validos");
+			JOptionPane.showMessageDialog(this, "los campos no son validos");
 		}
     }
     

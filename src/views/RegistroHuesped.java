@@ -10,6 +10,7 @@ import com.toedter.calendar.JDateChooser;
 
 import Controladores.HuespedesController;
 import Controladores.ReservaController;
+import models.Huespedes;
 
 import javax.swing.JComboBox;
 import javax.swing.DefaultComboBoxModel;
@@ -24,6 +25,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.text.Format;
+import java.time.LocalDate;
 import java.awt.event.ActionEvent;
 import java.awt.Toolkit;
 import javax.swing.SwingConstants;
@@ -53,7 +55,7 @@ public class RegistroHuesped extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					RegistroHuesped frame = new RegistroHuesped();
+					RegistroHuesped frame = new RegistroHuesped(0);
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -65,7 +67,8 @@ public class RegistroHuesped extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public RegistroHuesped() {
+	public RegistroHuesped(int setReservaId) {
+		RegistroHuesped registroHuesped = this;
 		this.huespedesController = new HuespedesController();
 		this.reservaController = new ReservaController();
 		
@@ -213,7 +216,8 @@ public class RegistroHuesped extends JFrame {
 		lblNumeroReserva.setFont(new Font("Roboto Black", Font.PLAIN, 18));
 		contentPane.add(lblNumeroReserva);
 		
-		txtNreserva = new JTextField();
+		txtNreserva = new JTextField("" + setReservaId);
+		txtNreserva.setEditable(false);
 		txtNreserva.setFont(new Font("Roboto", Font.PLAIN, 16));
 		txtNreserva.setBounds(560, 495, 285, 33);
 		txtNreserva.setColumns(10);
@@ -264,8 +268,11 @@ public class RegistroHuesped extends JFrame {
 			public void mouseClicked(MouseEvent e) {
 				if(!txtNombre.getText().equals("") && !txtApellido.getText().equals("") 
 						&& !txtNacionalidad.getSelectedItem().toString().equals("") 
-						&& !txtTelefono.getText().equals("") && txtFechaN.getDate() != null)
-				guardarHuespedes();
+						&& !txtTelefono.getText().equals("") && txtFechaN.getDate() != null) {
+					guardarHuespedes();
+				} else {
+					JOptionPane.showMessageDialog(registroHuesped, "los campos no son validos");
+				}
 			}
 		});
 		btnguardar.setLayout(null);
@@ -342,6 +349,15 @@ public class RegistroHuesped extends JFrame {
     }
     
     private void guardarHuespedes() {
+    	LocalDate fechaN = LocalDate.parse(((JTextField) txtFechaN.getDateEditor().getUiComponent()).getText());
     	
+    	Huespedes huespedes = new Huespedes(txtNombre.getText(), txtApellido.getText(), fechaN, 
+    			txtNacionalidad.getSelectedItem().toString(), txtTelefono.getText(), 3);
+    	
+    	this.huespedesController.guardar(huespedes);
+    	
+    	Exito exitoFrame = new Exito();
+    	exitoFrame.setVisible(true);
+    	dispose();
     }
 }

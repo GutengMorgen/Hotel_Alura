@@ -23,8 +23,8 @@ public class ReservaDAO {
 			try(PreparedStatement prepared = consql.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)){
 				prepared.setObject(1, reserva.getDateE());
 				prepared.setObject(2, reserva.getDateS());
-				prepared.setObject(3, reserva.getValor());
-				prepared.setObject(4, reserva.getFormaPago());
+				prepared.setString(3, reserva.getValor());
+				prepared.setString(4, reserva.getFormaPago());
 				
 				int rowsAffected = prepared.executeUpdate();
 

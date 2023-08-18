@@ -22,12 +22,12 @@ public class HuespedesDAO {
 			String sql = "INSERT INTO huespedes (nombre, apellido, fecha_nacimiento, nacionalidad, telefono, id_reserva)" +
 					"VALUES (?,?,?,?,?,?)";
 			try(PreparedStatement prepared = consql.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)){
-				prepared.setObject(1, huespedes.getNombre());
-				prepared.setObject(2, huespedes.getApellido());
+				prepared.setString(1, huespedes.getNombre());
+				prepared.setString(2, huespedes.getApellido());
 				prepared.setObject(3, huespedes.getFechaNacimiento());
-				prepared.setObject(4, huespedes.getNacionalidad());
-				prepared.setObject(5, huespedes.getTelefono());
-				prepared.setObject(6, huespedes.getIdReserva());
+				prepared.setString(4, huespedes.getNacionalidad());
+				prepared.setString(5, huespedes.getTelefono());
+				prepared.setInt(6, huespedes.getIdReserva());
 				
 				int rowsAffected = prepared.executeUpdate();
 
