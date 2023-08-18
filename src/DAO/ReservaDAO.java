@@ -81,7 +81,7 @@ public class ReservaDAO {
 		}
 	}
 	
-	public void Actualizar(LocalDate dateE, LocalDate dateS, String Valor, String FormaPago, Integer Id) {
+	public void actualizar(LocalDate dateE, LocalDate dateS, String Valor, String FormaPago, Integer Id) {
 		String sql = "UPDATE reservas SET" + 
 				" fecha_entrada=?, fecha_salida=?, valor=?, forma_pago=? WHERE id=?";
 		

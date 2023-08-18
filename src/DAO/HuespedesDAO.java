@@ -1,6 +1,7 @@
 package DAO;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -66,6 +67,55 @@ public class HuespedesDAO {
 		}
 	}
 	
+	public List<Huespedes> buscarId(String id) {
+		List<Huespedes> huespedes = new ArrayList<>();
+		
+		String sql = "SELECT id, nombre, apellido, fecha_nacimiento, nacionalidad, telefono, id_reserva FROM huespedes WHERE id=?";
+		
+		try(PreparedStatement prepared = consql.prepareStatement(sql)){
+			prepared.setString(1, id);
+			prepared.execute();
+			
+			transformarResultados(huespedes, prepared);
+
+			return huespedes;
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+	public void actualizar(String nombre, String apellido, LocalDate fechaNacimiento, String nacionalidad,
+			String telefono, Integer idReserva, Integer id) {
+		String sql = "UPDATE huespedes SET" + 
+				" nombre=?, apellido=?, fecha_nacimiento=?, nacionalidad=?, telefono=?, id_reserva=? WHERE id=?";
+		
+		try(PreparedStatement prepared = consql.prepareStatement(sql)){
+			prepared.setString(1, nombre);
+			prepared.setString(2, apellido);
+			prepared.setObject(3, Date.valueOf(fechaNacimiento));
+			prepared.setString(4, nacionalidad);
+			prepared.setString(5, telefono);
+			prepared.setInt(6, idReserva);
+			prepared.setInt(7, id);
+			prepared.execute();
+			
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+	public void eliminar(Integer id) {
+		String sql = "DELETE FROM huespedes WHERE id=?";
+		
+		try {
+			PreparedStatement prepared = consql.prepareStatement(sql);
+			prepared.setInt(1, id);
+			prepared.executeUpdate();
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
 	private void transformarResultados(List<Huespedes> huespedes, PreparedStatement prepared) throws SQLException {
 		try(ResultSet result = prepared.getResultSet()){
 			while(result.next()) {
@@ -77,7 +127,7 @@ public class HuespedesDAO {
 				String telefono = result.getString("telefono");
 				Integer idReserva = result.getInt("id_reserva");
 				
-				Huespedes producto = new Huespedes(idReserva, nombre, apellido, fechaNacimiento, nacionalidad, telefono, idReserva)
+				Huespedes producto = new Huespedes(idReserva, nombre, apellido, fechaNacimiento, nacionalidad, telefono, idReserva);
 				huespedes.add(producto);
 			}
 		}

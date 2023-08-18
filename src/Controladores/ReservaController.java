@@ -29,8 +29,8 @@ public class ReservaController {
 		return this.reservaDAO.buscarId(id);
 	}
 	
-	public void actualizarReservas(LocalDate dateE, LocalDate dateS, String Valor, String FormaPago, Integer Id) {
-		this.reservaDAO.Actualizar(dateE, dateS, Valor, FormaPago, Id);
+	public void actualizar(LocalDate dateE, LocalDate dateS, String Valor, String FormaPago, Integer Id) {
+		this.reservaDAO.actualizar(dateE, dateS, Valor, FormaPago, Id);
 	}
 	
 	public void eliminar(Integer id) {
