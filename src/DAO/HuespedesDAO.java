@@ -5,6 +5,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 import models.Huespedes;
 import models.Reserva;
@@ -44,6 +47,39 @@ public class HuespedesDAO {
 			};
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
+		}
+	}
+	
+	public List<Huespedes> mostrar(){
+		List<Huespedes> huespedes = new ArrayList<>();
+		
+		String sql = "SELECT id, nombre, apellido, fecha_nacimiento, nacionalidad, telefono, id_reserva FROM huespedes";
+		
+		try(PreparedStatement prepared = consql.prepareStatement(sql)){
+			prepared.execute();
+			
+			transformarResultados(huespedes, prepared);
+
+			return huespedes;
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+	private void transformarResultados(List<Huespedes> huespedes, PreparedStatement prepared) throws SQLException {
+		try(ResultSet result = prepared.getResultSet()){
+			while(result.next()) {
+				int id = result.getInt("id");
+				String nombre = result.getString("nombre");
+				String apellido = result.getString("apellido");
+				LocalDate fechaNacimiento = result.getDate("fecha_nacimiento").toLocalDate().plusDays(1);
+				String nacionalidad = result.getString("nacionalidad");
+				String telefono = result.getString("telefono");
+				Integer idReserva = result.getInt("id_reserva");
+				
+				Huespedes producto = new Huespedes(idReserva, nombre, apellido, fechaNacimiento, nacionalidad, telefono, idReserva)
+				huespedes.add(producto);
+			}
 		}
 	}
 }

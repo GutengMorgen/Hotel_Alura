@@ -18,9 +18,12 @@ import javax.swing.ImageIcon;
 import java.awt.Color;
 import java.awt.SystemColor;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
 import java.awt.Font;
 import java.awt.event.ActionListener;
 import java.util.List;
+import java.util.Optional;
 import java.awt.event.ActionEvent;
 import javax.swing.JTabbedPane;
 import java.awt.Toolkit;
@@ -29,7 +32,11 @@ import javax.swing.JSeparator;
 import javax.swing.ListSelectionModel;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionAdapter;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 
 @SuppressWarnings("serial")
 public class Busqueda extends JFrame {
@@ -249,6 +256,17 @@ public class Busqueda extends JFrame {
 		lblBuscar.setFont(new Font("Roboto", Font.PLAIN, 18));
 		
 		JPanel btnEditar = new JPanel();
+		btnEditar.addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent e) {
+				int filaReserva = tbReservas.getSelectedRow();
+				if(filaReserva >= 0) {
+					actualizarReservas();
+					limpiarTabla();
+					mostrarTablaReservas();
+				}
+			}
+		
+		});
 		btnEditar.setLayout(null);
 		btnEditar.setBackground(new Color(12, 138, 199));
 		btnEditar.setBounds(635, 508, 122, 35);
@@ -263,6 +281,23 @@ public class Busqueda extends JFrame {
 		btnEditar.add(lblEditar);
 		
 		JPanel btnEliminar = new JPanel();
+		btnEliminar.addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent e) {
+				int filaReserva = tbReservas.getSelectedRow();
+				if(filaReserva >= 0) {
+					reservas = tbReservas.getValueAt(filaReserva, 0).toString();
+					int confimar = JOptionPane.showConfirmDialog(null, "Desea eliminar la fila?");
+					if(confimar == JOptionPane.YES_OPTION) {
+						String valor = tbReservas.getValueAt(filaReserva, 0).toString();
+						reservaController.eliminar(Integer.valueOf(valor));
+						JOptionPane.showMessageDialog(contentPane, "Registro eliminado con exito");
+						limpiarTabla();
+						mostrarTablaReservas();
+					}
+				}
+			}
+		
+		});
 		btnEliminar.setLayout(null);
 		btnEliminar.setBackground(new Color(12, 138, 199));
 		btnEliminar.setBounds(767, 508, 122, 35);
@@ -316,6 +351,47 @@ public class Busqueda extends JFrame {
 			e.printStackTrace();
 		}
 	}
+	
+	private void actualizarReservas() {
+		Optional.ofNullable(modelo.getValueAt(tbReservas.getSelectedRow(), tbReservas.getSelectedColumn()))
+		.ifPresent(file -> {
+			LocalDate dateE;
+			LocalDate dateS;
+			
+			try {
+				DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+				dateE = LocalDate.parse(modelo.getValueAt(tbReservas.getSelectedRow(), 1).toString(), dateFormat);
+				dateS = LocalDate.parse(modelo.getValueAt(tbReservas.getSelectedRow(), 2).toString(), dateFormat);
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+			
+			this.reservasView.limpiarValor();
+			
+			String valor = calcularValorReserva(dateE, dateS);
+			String formaPago = (String) modelo.getValueAt(tbReservas.getSelectedRow(), 4);
+			Integer id = Integer.valueOf(modelo.getValueAt(tbReservas.getSelectedRow(), 0).toString());
+			
+			if(tbReservas.getSelectedColumn() == 0) {
+				JOptionPane.showMessageDialog(this, "no se puede editar los id");
+			}else {
+				this.reservaController.actualizarReservas(dateE, dateS, valor, formaPago, id);
+				JOptionPane.showMessageDialog(this, "Registro modificado con exito");
+			}
+		});
+	}
+	
+	public String calcularValorReserva(LocalDate dateE, LocalDate dateS) {
+		if(dateE != null && dateS != null) {
+			int dias = (int) ChronoUnit.DAYS.between(dateE, dateS);
+			int noche = 50;
+			int valor = dias * noche;
+			return ("S/ " + valor);
+		} else {
+			return "";
+		}
+	}
+	
 	
 	private void limpiarTabla() {
 		((DefaultTableModel) tbHuespedes.getModel()).setRowCount(0);

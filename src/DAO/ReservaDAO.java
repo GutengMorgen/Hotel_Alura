@@ -1,6 +1,7 @@
 package DAO;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -80,7 +81,22 @@ public class ReservaDAO {
 		}
 	}
 	
-	
+	public void Actualizar(LocalDate dateE, LocalDate dateS, String Valor, String FormaPago, Integer Id) {
+		String sql = "UPDATE reservas SET" + 
+				" fecha_entrada=?, fecha_salida=?, valor=?, forma_pago=? WHERE id=?";
+		
+		try(PreparedStatement prepared = consql.prepareStatement(sql)){
+			prepared.setObject(1, Date.valueOf(dateE));
+			prepared.setObject(2, Date.valueOf(dateS));
+			prepared.setString(3, Valor);
+			prepared.setString(4, FormaPago);
+			prepared.setInt(5, Id);
+			prepared.execute();
+			
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
 	
 	private void transformarResultados(List<Reserva> reservas, PreparedStatement prepared) throws SQLException {
 		try(ResultSet result = prepared.getResultSet()){
@@ -95,6 +111,21 @@ public class ReservaDAO {
 				reservas.add(producto);
 				
 			}
+		}
+	}
+	
+	public void eliminar(Integer id) {
+		String sql = "DELETE FROM reservas WHERE id=?";
+		
+		try {
+			Statement statement = consql.createStatement();
+			statement.execute("SET FOREIGN_KEY_CHECKS=0");
+			PreparedStatement prepared = consql.prepareStatement(sql);
+			prepared.setInt(1, id);
+			prepared.executeUpdate();
+			statement.execute("SET FOREIGN_KEY_CHECKS=1");
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
 		}
 	}
 }
