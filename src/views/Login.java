@@ -4,10 +4,14 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
+import Controladores.UserController;
+
 import java.awt.Color;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JTextField;
 import javax.swing.JSeparator;
 import java.awt.SystemColor;
@@ -179,35 +183,6 @@ public class Login extends JFrame {
 		lblContrasea.setBounds(65, 316, 140, 26);
 		panel.add(lblContrasea);
 		
-		JPanel btnLogin = new JPanel();
-		btnLogin.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseEntered(MouseEvent e) {
-				btnLogin.setBackground(new Color(0, 156, 223));
-			}
-		
-			@Override
-			public void mouseExited(MouseEvent e) {
-				btnLogin.setBackground(SystemColor.textHighlight);
-			}
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				Login();
-			}
-		});
-		btnLogin.setBackground(SystemColor.textHighlight);
-		btnLogin.setBounds(65, 431, 122, 44);
-		panel.add(btnLogin);
-		btnLogin.setLayout(null);
-		btnLogin.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-		
-		JLabel lblNewLabel = new JLabel("ENTRAR");
-		lblNewLabel.setBounds(0, 0, 122, 44);
-		btnLogin.add(lblNewLabel);
-		lblNewLabel.setForeground(SystemColor.controlLtHighlight);
-		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		lblNewLabel.setFont(new Font("Roboto", Font.PLAIN, 18));
-		
 		JLabel lblNewLabel_1 = new JLabel("");
 		lblNewLabel_1.setHorizontalAlignment(SwingConstants.CENTER);
 		lblNewLabel_1.setIcon(new ImageIcon(Login.class.getResource("/imagenes/lOGO-50PX.png")));
@@ -232,30 +207,51 @@ public class Login extends JFrame {
 		header.setBounds(0, 0, 784, 36);
 		panel.add(header);
 		header.setLayout(null);
+		
+		//button login
+		JButton btnLogin = new JButton();
+		btnLogin.addActionListener(new UserController(this));
+		btnLogin.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				btnLogin.setBackground(new Color(0, 156, 223));
+			}
+		
+			@Override
+			public void mouseExited(MouseEvent e) {
+				btnLogin.setBackground(SystemColor.textHighlight);
+			}
+		});
+		btnLogin.setBackground(SystemColor.textHighlight);
+		btnLogin.setBounds(65, 431, 122, 44);
+		panel.add(btnLogin);
+		btnLogin.setLayout(null);
+		btnLogin.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+		
+		JLabel lblNewLabel = new JLabel("ENTRAR");
+		lblNewLabel.setBounds(0, 0, 122, 44);
+		btnLogin.add(lblNewLabel);
+		lblNewLabel.setForeground(SystemColor.controlLtHighlight);
+		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		lblNewLabel.setFont(new Font("Roboto", Font.PLAIN, 18));
 	}
 	
-	private void Login() {
-		 String Usuario= "admin";
-	     String Contraseña="admin";
+	private void headerMousePressed(java.awt.event.MouseEvent evt) {
+        xMouse = evt.getX();
+        yMouse = evt.getY();
+    }//GEN-LAST:event_headerMousePressed
 
-	        String contrase=new String (txtContrasena.getPassword());
-
-	        if(txtUsuario.getText().equals(Usuario) && contrase.equals(Contraseña)){
-	            MenuUsuario menu = new MenuUsuario();
-	            menu.setVisible(true);
-	            dispose();	 
-	        }else {
-	            JOptionPane.showMessageDialog(this, "Usuario o Contraseña no válidos");
-	        }
-	} 
-	 private void headerMousePressed(java.awt.event.MouseEvent evt) {
-	        xMouse = evt.getX();
-	        yMouse = evt.getY();
-	    }//GEN-LAST:event_headerMousePressed
-
-	    private void headerMouseDragged(java.awt.event.MouseEvent evt) {
-	        int x = evt.getXOnScreen();
-	        int y = evt.getYOnScreen();
-	        this.setLocation(x - xMouse, y - yMouse);
-}
+    private void headerMouseDragged(java.awt.event.MouseEvent evt) {
+        int x = evt.getXOnScreen();
+        int y = evt.getYOnScreen();
+        this.setLocation(x - xMouse, y - yMouse);
+    }
+    
+    public String getUsuario() {
+    	return txtUsuario.getText();
+    }
+    
+    public String getContrasena() {
+    	return new String(txtContrasena.getPassword());
+    }
 }

@@ -7,6 +7,10 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.JTextField;
 import java.awt.Color;
 import com.toedter.calendar.JDateChooser;
+
+import Controladores.HuespedesController;
+import Controladores.ReservaController;
+
 import javax.swing.JComboBox;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JLabel;
@@ -38,6 +42,9 @@ public class RegistroHuesped extends JFrame {
 	private JLabel labelExit;
 	private JLabel labelAtras;
 	int xMouse, yMouse;
+	
+	private HuespedesController huespedesController;
+	private ReservaController reservaController;
 
 	/**
 	 * Launch the application.
@@ -59,6 +66,8 @@ public class RegistroHuesped extends JFrame {
 	 * Create the frame.
 	 */
 	public RegistroHuesped() {
+		this.huespedesController = new HuespedesController();
+		this.reservaController = new ReservaController();
 		
 		setIconImage(Toolkit.getDefaultToolkit().getImage(RegistroHuesped.class.getResource("/imagenes/lOGO-50PX.png")));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -253,6 +262,10 @@ public class RegistroHuesped extends JFrame {
 		btnguardar.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
+				if(!txtNombre.getText().equals("") && !txtApellido.getText().equals("") 
+						&& !txtNacionalidad.getSelectedItem().toString().equals("") 
+						&& !txtTelefono.getText().equals("") && txtFechaN.getDate() != null)
+				guardarHuespedes();
 			}
 		});
 		btnguardar.setLayout(null);
@@ -322,10 +335,13 @@ public class RegistroHuesped extends JFrame {
 	        yMouse = evt.getY();
 	    }
 
-	    private void headerMouseDragged(java.awt.event.MouseEvent evt) {
-	        int x = evt.getXOnScreen();
-	        int y = evt.getYOnScreen();
-	        this.setLocation(x - xMouse, y - yMouse);
-}
-											
+    private void headerMouseDragged(java.awt.event.MouseEvent evt) {
+        int x = evt.getXOnScreen();
+        int y = evt.getYOnScreen();
+        this.setLocation(x - xMouse, y - yMouse);
+    }
+    
+    private void guardarHuespedes() {
+    	
+    }
 }

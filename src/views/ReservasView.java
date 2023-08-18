@@ -11,10 +11,16 @@ import javax.swing.ImageIcon;
 import java.awt.Color;
 import javax.swing.JTextField;
 import com.toedter.calendar.JDateChooser;
+
+import Controladores.ReservaController;
+import models.Reserva;
+
 import java.awt.Font;
 import javax.swing.JComboBox;
 import javax.swing.DefaultComboBoxModel;
 import java.text.Format;
+import java.time.LocalDate;
+import java.util.Calendar;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
@@ -37,6 +43,8 @@ public class ReservasView extends JFrame {
 	int xMouse, yMouse;
 	private JLabel labelExit;
 	private JLabel labelAtras;
+	
+	private ReservaController reservaController;
 
 	/**
 	 * Launch the application.
@@ -59,6 +67,9 @@ public class ReservasView extends JFrame {
 	 */
 	public ReservasView() {
 		super("Reserva");
+		
+		this.reservaController = new ReservaController();
+		
 		setIconImage(Toolkit.getDefaultToolkit().getImage(ReservasView.class.getResource("/imagenes/aH-40px.png")));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 910, 560);
@@ -265,6 +276,7 @@ public class ReservasView extends JFrame {
 		txtFechaSalida.addPropertyChangeListener(new PropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent evt) {
 				//Activa el evento, después del usuario seleccionar las fechas se debe calcular el valor de la reserva
+				calcularValor(txtFechaEntrada, txtFechaSalida);
 			}
 		});
 		txtFechaSalida.setDateFormatString("yyyy-MM-dd");
@@ -297,8 +309,9 @@ public class ReservasView extends JFrame {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				if (ReservasView.txtFechaEntrada.getDate() != null && ReservasView.txtFechaSalida.getDate() != null) {		
-					RegistroHuesped registro = new RegistroHuesped();
-					registro.setVisible(true);
+//					RegistroHuesped registro = new RegistroHuesped();
+//					registro.setVisible(true);
+					guardarReserva();
 				} else {
 					JOptionPane.showMessageDialog(null, "Debes llenar todos los campos.");
 				}
@@ -319,9 +332,49 @@ public class ReservasView extends JFrame {
 	        yMouse = evt.getY();
 	    }
 
-	    private void headerMouseDragged(java.awt.event.MouseEvent evt) {
-	        int x = evt.getXOnScreen();
-	        int y = evt.getYOnScreen();
-	        this.setLocation(x - xMouse, y - yMouse);
-}
+    private void headerMouseDragged(java.awt.event.MouseEvent evt) {
+        int x = evt.getXOnScreen();
+        int y = evt.getYOnScreen();
+        this.setLocation(x - xMouse, y - yMouse);
+    }
+    
+    private void guardarReserva() {
+    	if(txtFechaEntrada.getDate() != null && txtFechaSalida.getDate() != null
+    		&& !txtValor.getText().equals("") && !txtFormaPago.getSelectedItem().toString().equals("")) {
+    		LocalDate dateE = LocalDate.parse(((JTextField) txtFechaEntrada.getDateEditor().getUiComponent()).getText());
+    		LocalDate dateS = LocalDate.parse(((JTextField) txtFechaSalida.getDateEditor().getUiComponent()).getText());
+    		Reserva reserva = new Reserva(dateE,dateS, txtValor.getText(), txtFormaPago.getSelectedItem().toString());
+    		
+    		reservaController.guardar(reserva);
+    		
+    		RegistroHuesped registro = new RegistroHuesped();
+			registro.setVisible(true);
+			dispose();
+    	} else {
+			JOptionPane.showMessageDialog(this, "los campos no validos");
+		}
+    }
+    
+    public void calcularValor(JDateChooser dateE, JDateChooser dateS) {
+    	if(dateE.getDate() != null && dateS.getDate() != null) {
+    		if (dateE.getDate().after(dateS.getDate())) {
+    			JOptionPane.showMessageDialog(this, "la fecha de entrada no puede ser posterior a la fecha de salida, idiota!");
+    			return;
+    		}
+    		Calendar inicio = dateE.getCalendar();
+    		Calendar fin = dateS.getCalendar();
+    		int dias = -1;
+    		int noches = 50;
+    		int valor;
+    		
+    		while(inicio.before(fin) || inicio.equals(fin)) {
+    			dias++;
+    			inicio.add(Calendar.DATE, 1);
+    		}
+    		
+    		valor = dias * noches;
+    		txtValor.setText("S/." + valor);
+    		
+    	}
+    }
 }
