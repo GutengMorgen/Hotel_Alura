@@ -1,2 +1,2 @@
 # Hotel Alura
-init project
+este es un projecto challenge de alura one
